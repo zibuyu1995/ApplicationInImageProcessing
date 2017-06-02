@@ -1,0 +1,71 @@
+基于Python的图像搜索引擎：
+
+主要技术：
+	HSV颜色特征识别：
+		特征点选择（8, 3, 3）：最佳颜色特征点选择
+	Mongodb数据库存储：
+		数据库：features：
+		集合：tindex
+	协程处理数据：
+		小规模数据处理效果不明显
+
+整体目录：
+├── app
+│   ├── index.py  将图像数据集生成图像特征向量存入数据库
+│   ├── __init__.py
+│   ├── search
+│   │   ├── colordescriptor.py 主要负责颜色特征，生成特征向量
+│   │   ├── __init__.py
+│   │   └── searcher.py 主要搜索图像和数据集图像的相似度匹配
+│   ├── static
+│   │   ├── css  页面布局
+│   │   │   └── mm.css
+│   │   ├── dataset  数据集存放文件夹
+│   │   ├── img页面布局
+│   │   │   └── sky.jpg
+│   │   ├── main  页面布局 
+│   │   │   └── bootstrap
+│   │   │       └── css
+│   │   │           └── bootstrap.css
+│   │   ├── query 用户提交的搜索图像存储路径
+│   │   └── test
+│   ├── templates  模版
+│   │   ├── index.html  主页模版
+│   │   └── result.html 搜索结果返回模版
+│   └── test.py
+├── README 
+├── requirements.txt 必要的包
+└── run.py 运行
+ 
+环境问题：
+opencv环境配置推荐：
+http://www.pyimagesearch.com/2015/10/26/how-to-install-opencv-3-on-raspbian-jessie/
+
+运行环境：pip install requirements.txt
+requirements.txt 
+
+mongodb数据库安装：
+可以参照我博客的安装方法：
+
+nginx 和gunicorn配置不在多说。
+
+
+数据集： 
+ftp://ftp.inrialpes.fr/pub/lear/douze/data/jpg1.tar.gz 
+
+使用：
+1、运行index.py，生存特征向量数据集
+2、在static/test中放几张测试图像，运行test.py 查看是否返回结果值。
+3、2步运行返回结果后，运行run.py
+
+注意：
+需要修改index.py、app/__init__.py 中文件夹的路径。
+本文关键点：
+主要是OpenCV环境和Numpy环境配置很难
+强烈推荐使用上面的opencv环境配置来进行
+
+
+有任何问题请发邮件给我：zibuyu1995@gmail.com
+
+慕斯 2017.6.2 NUN
+

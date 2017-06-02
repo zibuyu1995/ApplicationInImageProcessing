@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-Hans-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content=" width=device-width, initial-scale=1">
+    <meta name="author" content="Mousse">
+
+    <title>Mousse</title>
+    <link href="../static/main/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/mm.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+    <div align="center">
+      <h1>搜索结果</h1>
+    </div>
+    <header class="int" align="center">
+      <div class="into-body">
+        <div class="container">
+        <section class="container content-section  ">
+          <div>
+            <h3>原图</h3><hr/>
+            <u><h4>{{filename}}<h4><u>
+            <img src="../static/query/{{filename}}"  width="400px" height="300px">
+          </div>
+          <hr/>
+            <h3>相似图像</h3>
+          <hr/>
+          {% for score,resultID in results %}
+          <div class="row">
+          <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+              <img src="../static/dataset/{{resultID}}.png" width="400px" height="300px" >
+              <div class="caption">
+                <p>{{resultID}}.png 卡方距离：{{score}}</p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+            <!-- {% for score,resultID in results %}
+            <div class = "image">
+                <u><h4>{{resultID}}.png 卡方距离：{{score}}<h4><u>
+                <img src="../static/dataset/{{resultID}}.png" width="400px" height="300px"  >
+            </div>
+            {% endfor %} -->
+        </div>
+      </section>
+      </div>
+    </div>
+  </header>
+
+    <footer align="center">
+        <div class="container ">
+            <p>陶德坤 &copy;2016/12/21</p>
+            <p>北方民族大学电气信息工程学院电子131</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>
