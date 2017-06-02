@@ -1,0 +1,66 @@
+本项目基于ORB特征提取算法来实现相似图像匹配。
+
+所用到的知识：
+Flask搭建web界面
+mongodb数据库存储特征值
+open cv
+ORB特征点提取算法
+knn筛选匹配点
+
+环境信息：
+opencv 3.0
+ubuntu 14.0 64
+
+各个程序说明：
+app.py : web界面配置
+run.py ：运行app
+
+index.py :提取特征点并且存入mongodb数据库
+tserach.py：shell界面进行测试并返回相似结果
+
+ORBdescriptor.py ：给定特征值返回匹配结果
+ORBsearcher.py   ：根据搜索图像和数据库中特征值做匹配，返回结果最大的5个数值
+
+pac.py ：pac降维方法，(维度太低不推荐使用，高维度强烈推荐使用）
+
+
+使用：
+环境问题
+python环境所用到的包在config/requirements.txt
+opencv环境配置推荐：
+http://www.pyimagesearch.com/2015/10/26/how-to-install-opencv-3-on-raspbian-jessie/
+
+数据集：
+假期数据集：ftp://ftp.inrialpes.fr/pub/lear/douze/data/jpg1.tar.gz
+可以用config/cutimg.py来批量剪切图片 
+推荐：400*300
+存放在./static/dataset
+
+
+运行：
+推荐先运行tsearch.py如果能返回结果再运行run.py
+nginx 和gunicorn配置需要自己完成。
+
+注意：
+如果数据集太大，不推荐在ORBsearcher.py中的直接把数据集转换成列表
+
+已知问题：
+在树莓派（32）和阿里云（64）上返回结果有差异！！！
+
+虽然用了协程，但是没感觉快了多少。
+
+特征点只选了100个点，太少有误差。
+
+计算相似图像方法太粗糙
+
+flask 的模版太粗糙，建议更改。
+
+数据集太大建议使用二分查找
+
+
+********************************************************
+因为马上要毕业没时间继续完善，等找到工作后会继续深入.
+有任何问题请联系我：zibuyu1995@gmail.com
+
+Mousee 2017.4.12 NUN
+********************************************************
