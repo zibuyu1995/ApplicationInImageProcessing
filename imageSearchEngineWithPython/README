@@ -45,6 +45,8 @@ http://www.pyimagesearch.com/2015/10/26/how-to-install-opencv-3-on-raspbian-jess
 requirements.txt 
 
 mongodb数据库安装：
+http://blog.csdn.net/eds95/article/details/72847238
+http://blog.csdn.net/eds95/article/details/72847733
 可以参照我博客的安装方法：
 
 nginx 和gunicorn配置不在多说。
