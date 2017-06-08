@@ -24,9 +24,5 @@ for imagePath in glob.glob("/home/search/static/dataset" + "/*.png"):
 	features = cd.describe(image)
 	features = [float(f) for f in features]
 	f = {"_id":imageID, imageID:features}
-	try:
-	#插入记录
-		index.insert_one(f)
-		print  imageID
-	except bson.errors.InvalidDocument:
-		print "error".format(imageID)
+        index.insert_one(f)
+	print  imageID

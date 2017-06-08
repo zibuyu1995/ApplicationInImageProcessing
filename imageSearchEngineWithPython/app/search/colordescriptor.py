@@ -25,6 +25,7 @@ class ColorDescriptor:
 
 		# 构建一个椭圆来表示图像的中央区域
 		# 定义一个长短轴分别为图像长度75%的椭圆
+		# python3需要将/改为//
 		(axesX, axesY) = (int(w * 0.75) / 2, int(h * 0.75) / 2)
 		ellipMask = np.zeros(image.shape[:2], dtype = "uint8")
 		#所需参数：图像中心，椭圆的两个数值，椭圆的旋转角度，椭圆初始角

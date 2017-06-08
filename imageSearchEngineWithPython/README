@@ -1,5 +1,6 @@
 基于Python的图像搜索引擎：
 
+
 主要技术：
 	HSV颜色特征识别：
 		特征点选择（8, 3, 3）：最佳颜色特征点选择
@@ -65,7 +66,8 @@ ftp://ftp.inrialpes.fr/pub/lear/douze/data/jpg1.tar.gz
 本文关键点：
 主要是OpenCV环境和Numpy环境配置很难
 强烈推荐使用上面的opencv环境配置来进行
-
+运行环境是python2 ,如果你是python3，那么需要在colordescriptor.py中：
+(axesX, axesY) = (int(w * 0.75) / 2, int(h * 0.75) / 2) 中 把 / 改为 // 。
 
 有任何问题请发邮件给我：zibuyu1995@gmail.com
 
