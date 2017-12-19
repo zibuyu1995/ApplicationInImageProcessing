@@ -5,8 +5,7 @@ from search.searcher import Searcher
 import cv2
 import time
 
-
-#glob来搜索图像路径名称
+# glob来搜索图像路径名称
 
 # 设置搜索bin数值
 start = time.time()
@@ -19,6 +18,5 @@ s = Searcher(features)
 s.Search()
 results = s.results
 print results
-
 
 print("Total elapsed time {}".format(time.time() - start))
