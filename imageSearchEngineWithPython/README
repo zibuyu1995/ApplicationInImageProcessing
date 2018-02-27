@@ -40,7 +40,7 @@
  
 环境问题：
 opencv环境配置推荐：
-http://www.pyimagesearch.com/2015/10/26/how-to-install-opencv-3-on-raspbian-jessie/
+https://github.com/zibuyu1995/imageSearch/wiki/Raspberry3-%E6%90%AD%E5%BB%BAopencv3
 
 运行环境：pip install requirements.txt
 requirements.txt 
