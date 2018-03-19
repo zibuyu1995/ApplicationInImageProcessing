@@ -1,0 +1,2 @@
+ backports.shutil-get-terminal-size==1.0.0
+ numpy==1.13.3

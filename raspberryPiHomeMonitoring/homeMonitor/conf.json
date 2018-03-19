@@ -1,0 +1,11 @@
+{
+	"web_hook": "http://xxxx:5555/result",
+	"tmp_image_path": "",
+	"min_upload_seconds": 3.0,
+	"min_motion_frames": 7,
+	"camera_warmup_time": 3.0,
+	"delta_thresh": 5,
+	"resolution": [400, 300],
+	"fps": 16,
+	"min_area": 3500
+}
