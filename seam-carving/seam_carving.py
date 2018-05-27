@@ -112,6 +112,17 @@ class SeamCarver(object):
                 output[row] = np.argmin(cumulative_map[row, prv_x - 1: min(prv_x + 2, n - 1)]) + prv_x - 1
         return output
 
+    def delete_seam(self, seam_idx):
+        """ 垂直方向移除接缝 """
+        h, w = self.out_image.shape[: 2]
+        output = np.zeros((h, w - 1, 3))
+        for row in range(h):
+            col = seam_idx[row]
+            output[row, :, 0] = np.delete(self.out_image[row, :, 0], [col])
+            output[row, :, 1] = np.delete(self.out_image[row, :, 1], [col])
+            output[row, :, 2] = np.delete(self.out_image[row, :, 2], [col])
+        self.out_image = np.copy(output)
+
     def seams_removal(self, pixel):
         for dummy in range(pixel):
             # 计算能量图
@@ -120,7 +131,7 @@ class SeamCarver(object):
             cumulative_map = self.cumulative_map_forward(energy_map)
             seam_idx = self.find_seam(cumulative_map)
             # 从上到下找到并移除最小接缝
-            pass
+            self.delete_seam(seam_idx)
 
     def seams_insertion(self, pixel):
         for dummy in range(pixel):
