@@ -20,8 +20,10 @@ class SeamCarver(object):
         self.out_image = np.copy(self.in_image)
 
         # 定义核算子
-        self.kernel_x = np.array([[0., 0., 0.], [-1., 0., 1.], [0., 0., 0.]], dtype=np.float64)
-        self.kernel_y_left = np.array([[0., 0., 0.], [0., 0., 1.], [0., -1., 0.]], dtype=np.float64)
+        self.kernel_x = np.array([[0., 0., 0.], [-1., 0., 1.], [0., 0., 0.]],
+                                 dtype=np.float64)
+        self.kernel_y_left = np.array([[0., 0., 0.], [0., 0., 1.], [0., -1., 0.]],
+                                      dtype=np.float64)
         self.kernel_y_right = np.array([[0., 0., 0.], [1., 0., 0.], [0., -1., 0.]],
                                        dtype=np.float64)
 
@@ -61,13 +63,13 @@ class SeamCarver(object):
 
         # 图像卷积计算
         convolution_abs = [np.absolute(cv2.filter2D(b, -1, kernel=kernel)),
-            np.absolute(cv2.filter2D(g, -1, kernel=kernel)),
-            np.absolute(cv2.filter2D(r, -1, kernel=kernel))]
+                           np.absolute(cv2.filter2D(g, -1, kernel=kernel)),
+                           np.absolute(cv2.filter2D(r, -1, kernel=kernel))]
         output = sum(convolution_abs)
         return output
 
     def cumulative_map_forward(self, energy_map):
-        """ 累加能量图之前 """
+        """ 计算能量图 """
 
         matrix_x = self.calc_neighbor_matrix(self.kernel_x)
         matrix_y_left = self.calc_neighbor_matrix(self.kernel_y_left)
@@ -82,17 +84,30 @@ class SeamCarver(object):
                               matrix_y_right[row - 1, col + 1]
                     e_up = output[row - 1, col] + matrix_x[row - 1, col]
                     output[row, col] = energy_map[row, col] + min(e_right, e_up)
-                elif col == n - 1:
+                elif col == w - 1:
                     e_left = output[row - 1, col - 1] + matrix_x[row - 1, col - 1] + matrix_y_left[
                         row - 1, col - 1]
                     e_up = output[row - 1, col] + matrix_x[row - 1, col]
                     output[row, col] = energy_map[row, col] + min(e_left, e_up)
                 else:
-                    e_left = output[row - 1, col - 1] + matrix_x[row - 1, col - 1] + matrix_y_left[
-                        row - 1, col - 1]
-                    e_right = output[row - 1, col + 1] + matrix_x[row - 1, col + 1] + matrix_y_right[row - 1, col + 1]
+                    e_left = output[row - 1, col - 1] + matrix_x[
+                        row - 1, col - 1] + matrix_y_left[row - 1, col - 1]
+                    e_right = output[row - 1, col + 1] + matrix_x[
+                        row - 1, col + 1] + matrix_y_right[row - 1, col + 1]
                     e_up = output[row - 1, col] + matrix_x[row - 1, col]
                     output[row, col] = energy_map[row, col] + min(e_left, e_right, e_up)
+        return output
+
+    @staticmethod
+    def cumulative_map_backward(energy_map):
+        """ 累加能量图 """
+        h, w = energy_map.shape
+        output = np.copy(energy_map)
+        for row in range(1, h):
+            for col in range(w):
+                output[row, col] = \
+                    energy_map[row, col] + np.amin(
+                        output[row - 1, max(col - 1, 0): min(col + 2, w - 1)])
         return output
 
     @staticmethod
@@ -109,7 +124,8 @@ class SeamCarver(object):
             if prv_x == 0:
                 output[row] = np.argmin(cumulative_map[row, : 2])
             else:
-                output[row] = np.argmin(cumulative_map[row, prv_x - 1: min(prv_x + 2, n - 1)]) + prv_x - 1
+                output[row] = np.argmin(
+                    cumulative_map[row, prv_x - 1: min(prv_x + 2, w - 1)]) + prv_x - 1
         return output
 
     def delete_seam(self, seam_idx):
@@ -123,10 +139,38 @@ class SeamCarver(object):
             output[row, :, 2] = np.delete(self.out_image[row, :, 2], [col])
         self.out_image = np.copy(output)
 
+    def add_seam(self, seam_idx):
+        """ 增加接缝 """
+        h, w = self.out_image.shape[: 2]
+        output = np.zeros((h, w + 1, 3))
+        for row in range(h):
+            col = seam_idx[row]
+            for ch in range(3):
+                if col == 0:
+                    p = np.average(self.out_image[row, col: col + 2, ch])
+                    output[row, col, ch] = self.out_image[row, col, ch]
+                    output[row, col + 1, ch] = p
+                    output[row, col + 1:, ch] = self.out_image[row, col:, ch]
+                else:
+                    p = np.average(self.out_image[row, col - 1: col + 1, ch])
+                    output[row, : col, ch] = self.out_image[row, : col, ch]
+                    output[row, col, ch] = p
+                    output[row, col + 1:, ch] = self.out_image[row, col:, ch]
+        self.out_image = np.copy(output)
+
+    @staticmethod
+    def update_seams(remaining_seams, current_seam):
+        """ 更新接缝信息 """
+        output = []
+        for seam in remaining_seams:
+            seam[np.where(seam >= current_seam)] += 2
+            output.append(seam)
+        return output
+
     def seams_removal(self, pixel):
         for dummy in range(pixel):
             # 计算能量图
-            energy_map = self.calc_energy_map()
+            energy_map = self.energy_map()
             # 动态规划计算最小小能量线 todo
             cumulative_map = self.cumulative_map_forward(energy_map)
             seam_idx = self.find_seam(cumulative_map)
@@ -134,13 +178,22 @@ class SeamCarver(object):
             self.delete_seam(seam_idx)
 
     def seams_insertion(self, pixel):
+        temp_image = np.copy(self.out_image)
+        seams_record = []
+        # 先移除图像最小缝隙，并且按照顺序记录下坐标
         for dummy in range(pixel):
-            # 计算能量图
-            energy_map = self.calc_energy_map()
-            # 动态规划计算最小小能量线 todo
-
-            # 从上到下找到并移除最小接缝
-            pass
+            energy_map = self.energy_map()
+            cumulative_map = self.cumulative_map_backward(energy_map)
+            seam_idx = self.find_seam(cumulative_map)
+            seams_record.append(seam_idx)
+            self.delete_seam(seam_idx)
+        self.out_image = np.copy(temp_image)
+        n = len(seams_record)
+        # 依据移除接缝位置复制左右像素
+        for dummy in range(n):
+            seam = seams_record.pop(0)
+            self.add_seam(seam)
+            seams_record = self.update_seams(seams_record, seam)
 
     def seams_carving(self):
         # 计算需要插入行和列的数目
@@ -149,18 +202,19 @@ class SeamCarver(object):
 
         # 垂直方向
         if delta_col < 0:
-            # 垂直方向缩小 todo
+            # 垂直方向缩小
             self.seams_removal(-delta_col)
         elif delta_col > 0:
-            # 垂直方向放大 todo
-            pass
+            # 垂直方向放大
+            self.seams_insertion(delta_col)
 
         # 水平方向，先旋转再再缩小
         if delta_row < 0:
             # 旋转图像ccw=True 逆时针旋转
             self.out_image = self.rotate_image(self.out_image, ccw=True)
             self.seams_removal(delta_row)
+            self.out_image = self.rotate_image(self.out_image, ccw=True)
         elif delta_row > 0:
             self.out_image = self.rotate_image(self.out_image, ccw=True)
-            # 水平方向插入缝隙
-            pass
+            self.seams_insertion(delta_row)
+            self.out_image = self.rotate_image(self.out_image, ccw=True)
