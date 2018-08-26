@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 
 import os
 import cv2
@@ -7,13 +7,13 @@ from exceptions import Exception
 
 
 class SeamCarver(object):
-    def __init__(self, filename, out_height, out_width):
-        self.filename = filename
+    def __init__(self, file_path, out_height, out_width):
+        self.file_path = file_path
         self.out_height = out_height
         self.out_width = out_width
         # 读入图像并转为float64
-        if os.path.exists(self.filename):
-            self.in_image = cv2.imread(filename).astype(np.float64)
+        if os.path.exists(self.file_path):
+            self.in_image = cv2.imread(file_path).astype(np.float64)
         else:
             raise Exception('image file not exists')
         self.in_height, self.in_width = self.in_image.shape[: 2]
@@ -26,6 +26,32 @@ class SeamCarver(object):
                                       dtype=np.float64)
         self.kernel_y_right = np.array([[0., 0., 0.], [1., 0., 0.], [0., -1., 0.]],
                                        dtype=np.float64)
+        self.seams_carving()
+        cv2.imwrite('./test/out_image.jpg', self.out_image)
+
+    def seams_carving(self):
+        # 计算需要插入行和列的数目
+        delta_row = int(self.out_height - self.in_height)
+        delta_col = int(self.out_width - self.in_width)
+
+        # 垂直方向
+        if delta_col < 0:
+            # 垂直方向缩小
+            self.seams_removal(-delta_col)
+        elif delta_col > 0:
+            # 垂直方向放大
+            self.seams_insertion(delta_col)
+
+        # 水平方向，先旋转再再缩小
+        if delta_row < 0:
+            # 旋转图像ccw=True 逆时针旋转
+            self.out_image = self.rotate_image(self.out_image, ccw=True)
+            self.seams_removal(delta_row)
+            self.out_image = self.rotate_image(self.out_image, ccw=True)
+        elif delta_row > 0:
+            self.out_image = self.rotate_image(self.out_image, ccw=True)
+            self.seams_insertion(delta_row)
+            self.out_image = self.rotate_image(self.out_image, ccw=True)
 
     @staticmethod
     def rotate_image(image, ccw=False):
@@ -69,7 +95,7 @@ class SeamCarver(object):
         return output
 
     def cumulative_map_forward(self, energy_map):
-        """ 计算能量图 """
+        """ 计算前置能量(图像除去接缝时) """
 
         matrix_x = self.calc_neighbor_matrix(self.kernel_x)
         matrix_y_left = self.calc_neighbor_matrix(self.kernel_y_left)
@@ -100,7 +126,7 @@ class SeamCarver(object):
 
     @staticmethod
     def cumulative_map_backward(energy_map):
-        """ 累加能量图 """
+        """ 计算能量图(用户对象插入) """
         h, w = energy_map.shape
         output = np.copy(energy_map)
         for row in range(1, h):
@@ -195,26 +221,3 @@ class SeamCarver(object):
             self.add_seam(seam)
             seams_record = self.update_seams(seams_record, seam)
 
-    def seams_carving(self):
-        # 计算需要插入行和列的数目
-        delta_row = int(self.out_height - self.in_height)
-        delta_col = int(self.out_width - self.in_width)
-
-        # 垂直方向
-        if delta_col < 0:
-            # 垂直方向缩小
-            self.seams_removal(-delta_col)
-        elif delta_col > 0:
-            # 垂直方向放大
-            self.seams_insertion(delta_col)
-
-        # 水平方向，先旋转再再缩小
-        if delta_row < 0:
-            # 旋转图像ccw=True 逆时针旋转
-            self.out_image = self.rotate_image(self.out_image, ccw=True)
-            self.seams_removal(delta_row)
-            self.out_image = self.rotate_image(self.out_image, ccw=True)
-        elif delta_row > 0:
-            self.out_image = self.rotate_image(self.out_image, ccw=True)
-            self.seams_insertion(delta_row)
-            self.out_image = self.rotate_image(self.out_image, ccw=True)
