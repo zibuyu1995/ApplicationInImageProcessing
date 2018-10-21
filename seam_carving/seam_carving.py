@@ -3,7 +3,6 @@
 import os
 import cv2
 import numpy as np
-from exceptions import Exception
 
 
 class SeamCarver(object):
@@ -34,7 +33,7 @@ class SeamCarver(object):
         delta_row = int(self.out_height - self.in_height)
         delta_col = int(self.out_width - self.in_width)
 
-        # 垂直方向
+        # 垂直方向(列)
         if delta_col < 0:
             # 垂直方向缩小
             self.seams_removal(-delta_col)
@@ -42,16 +41,16 @@ class SeamCarver(object):
             # 垂直方向放大
             self.seams_insertion(delta_col)
 
-        # 水平方向，先旋转再再缩小
+        # 水平方向，先旋转再再缩小(行)
         if delta_row < 0:
             # 旋转图像ccw=True 逆时针旋转
             self.out_image = self.rotate_image(self.out_image, ccw=True)
             self.seams_removal(delta_row)
-            self.out_image = self.rotate_image(self.out_image, ccw=True)
+            self.out_image = self.rotate_image(self.out_image, ccw=False)
         elif delta_row > 0:
             self.out_image = self.rotate_image(self.out_image, ccw=True)
             self.seams_insertion(delta_row)
-            self.out_image = self.rotate_image(self.out_image, ccw=True)
+            self.out_image = self.rotate_image(self.out_image, ccw=False)
 
     @staticmethod
     def rotate_image(image, ccw=False):
@@ -97,6 +96,7 @@ class SeamCarver(object):
     def cumulative_map_forward(self, energy_map):
         """ 计算前置能量(图像除去接缝时) """
 
+        # 计算累积成本中顶部位置具有的最小能量
         matrix_x = self.calc_neighbor_matrix(self.kernel_x)
         matrix_y_left = self.calc_neighbor_matrix(self.kernel_y_left)
         matrix_y_right = self.calc_neighbor_matrix(self.kernel_y_right)
@@ -106,11 +106,13 @@ class SeamCarver(object):
         for row in range(1, h):
             for col in range(w):
                 if col == 0:
+                    # 最左
                     e_right = output[row - 1, col + 1] + matrix_x[row - 1, col + 1] + \
                               matrix_y_right[row - 1, col + 1]
                     e_up = output[row - 1, col] + matrix_x[row - 1, col]
                     output[row, col] = energy_map[row, col] + min(e_right, e_up)
                 elif col == w - 1:
+                    # 最右
                     e_left = output[row - 1, col - 1] + matrix_x[row - 1, col - 1] + matrix_y_left[
                         row - 1, col - 1]
                     e_up = output[row - 1, col] + matrix_x[row - 1, col]
@@ -132,8 +134,7 @@ class SeamCarver(object):
         for row in range(1, h):
             for col in range(w):
                 output[row, col] = \
-                    energy_map[row, col] + np.amin(
-                        output[row - 1, max(col - 1, 0): min(col + 2, w - 1)])
+                    energy_map[row, col] + np.amin(output[row - 1, max(col - 1, 0): min(col + 2, w - 1)])
         return output
 
     @staticmethod
