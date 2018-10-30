@@ -17,11 +17,8 @@ def index():
         # 保存图像
         filename = secure_filename(image.filename)
         image.save(os.path.join('./static/query', filename))
-
         return redirect(url_for('search', filename=filename))
-
-    return render_template('index.html',
-                           )
+    return render_template('index.html')
 
 
 # 搜索页面部分
