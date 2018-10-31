@@ -13,7 +13,8 @@ from concurrent.futures import ProcessPoolExecutor
 import cv2
 import uvloop
 from config.config import (
-    dataset_path, cpu_count, maximum_features, scale_factor
+    dataset_path, dataset_db_path,
+    cpu_count, maximum_features, scale_factor
 )
 
 
@@ -30,8 +31,12 @@ def generate_image_feature(image_path: str) -> tuple:
     return image_uid, feature
 
 
-def insert_index_redis():
-    pass
+def feature_persistence(task_results: list) -> int:
+    """ 图像特征集持久化到key-value数据库 """
+
+    feature_count = 0
+    # todo
+    return feature_count
 
 
 async def generate_image_index(eve_loop, processes_executor):
@@ -44,8 +49,9 @@ async def generate_image_index(eve_loop, processes_executor):
                 processes_executor, generate_image_feature, image_path
             )
         )
-    completed, _ = await asyncio.wait(image_feature_tasks)
-    results = [t.result() for t in completed]
+    task_results, _ = await asyncio.wait(image_feature_tasks)
+    feature_count = feature_persistence(task_results)
+    print(f"{feature_count}幅图像完成索引")
 
 
 if __name__ == '__main__':
