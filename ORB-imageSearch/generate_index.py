@@ -7,35 +7,26 @@ email: zibuyu1995@gmail.com
 
 import asyncio
 import glob
-import ujson
 from concurrent.futures import ProcessPoolExecutor
 
-import cv2
+import msgpack
 import uvloop
 from config.config import (
-    dataset_path, dataset_db_path,
-    cpu_count, maximum_features, scale_factor
+    dataset_path, dataset_db_path, cpu_count
 )
+from until.orb_features import generate_image_feature
 
 
-def generate_image_feature(image_path: str) -> tuple:
-    """
-    生成图像特征点
-    :param image_path: 图像路径
-    """
-    image_uid = image_path[image_path.rfind("/") + 1:][:6]
-    images = cv2.imread(image_path)
-    orb = cv2.ORB_create(maximum_features, scale_factor)
-    (kp, des) = orb.detectAndCompute(images, None)
-    feature = ujson.dumps(des.tolist())
-    return image_uid, feature
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
 def feature_persistence(task_results: list) -> int:
     """ 图像特征集持久化到key-value数据库 """
 
-    feature_count = 0
-    # todo
+    feature_dict = dict(task_result.result() for task_result in task_results)
+    with open(dataset_db_path, 'wb') as db:
+        msgpack.dump(feature_dict, db)
+    feature_count = len(feature_dict)
     return feature_count
 
 
