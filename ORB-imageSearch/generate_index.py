@@ -9,13 +9,12 @@ import asyncio
 import glob
 from concurrent.futures import ProcessPoolExecutor
 
-import msgpack
 import uvloop
 from config.config import (
-    dataset_path, dataset_db_path, cpu_count
+    dataset_path, cpu_count
 )
+from tinydb import TinyDB
 from until.orb_features import generate_image_feature
-
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
@@ -24,8 +23,10 @@ def feature_persistence(task_results: list) -> int:
     """ 图像特征集持久化到key-value数据库 """
 
     feature_dict = dict(task_result.result() for task_result in task_results)
-    with open(dataset_db_path, 'wb') as db:
-        msgpack.dump(feature_dict, db)
+
+    db = TinyDB('./static/dataset.db')
+    table = db.table('feature')
+    table.insert(feature_dict)
     feature_count = len(feature_dict)
     return feature_count
 
@@ -37,7 +38,7 @@ async def generate_image_index(eve_loop, processes_executor):
     for image_path in glob.glob(dataset_path + "/*.png"):
         task_append(
             eve_loop.run_in_executor(
-                processes_executor, generate_image_feature, image_path
+                processes_executor, generate_image_feature, image_path, True
             )
         )
     task_results, _ = await asyncio.wait(image_feature_tasks)
