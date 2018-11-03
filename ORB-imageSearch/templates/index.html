@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ site_name }}</title>
+</head>
+<style>
+    .footer {
+        position: fixed; left: 0; bottom: 0;
+        width: 100%; color: white; text-align: center;
+    }
+    .btn-xl {
+        padding: 10px 20px;
+        font-size: 20px;
+        border-radius: 10px;
+    }
+    .mousse {
+        background-image: url({{ background_image }});
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+        color: #fef2c0;
+    }
+</style>
+
+
+<body class="mousse">
+<h1 align="center">{{ site_name }}</h1>
+<header class="intro" align="center">
+    <div class="intro-body">
+        <div class="container">
+            <h3>上传图像</h3>
+            <form action="/search" method=post enctype=multipart/form-data>
+                <input type=file name=image class="btn-xl">
+                <input type=submit value=搜索 class="btn-xl">
+            </form>
+        </div>
+    </div>
+</header>
+
+
+<footer class="footer">
+    <p>Mousse by 2018-11-3 © IG NB</p>
+</footer>
+</body>
+</html>
