@@ -2,9 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>搜索页面</title>
+    <title>{{ site_name }}</title>
 </head>
-<body>
+<style>
+    .footer {
+        left: 0; bottom: 0;
+        width: 100%; color: white; text-align: center;
+    }
+    .mousse {
+        background-image: url("/static/css/background.jpg");
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+        color: #000000;
+    }
+</style>
 
+
+<body class="mousse">
+<h1 align="center">{{ site_name }}</h1>
+<header class="intro" align="center">
+    <div class="intro-body">
+        <div class="container">
+            <h2 style="color: #c1d0eaa8">原图</h2>
+            <img src="/static/uploads/{{ upload_image }}" style="height: 250px;">
+            <h2 style="color: #c1d0eaa8">搜索结果</h2>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                {% for search_result in search_results %}
+                  <tr>
+                    <td align="center">匹配特征点:{{ search_result[1] }}个 </td>
+                  </tr>
+                  <tr>
+                    <td align="center"><img src="/static/dataset/{{ search_result[0] }}.png" width="300" height="300" /> </td>
+                  </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</header>
+
+
+<footer class="footer">
+    <p>Mousse by 2018-11-3 © IG NB</p>
+</footer>
 </body>
 </html>

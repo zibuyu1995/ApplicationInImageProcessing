@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import cv2
-import msgpack
 from config.config import maximum_features, scale_factor
 
 
