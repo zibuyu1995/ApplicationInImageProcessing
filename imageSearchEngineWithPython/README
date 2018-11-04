@@ -54,7 +54,7 @@ nginx 和gunicorn配置不在多说。
 
 
 数据集： 
-ftp://ftp.inrialpes.fr/pub/lear/douze/data/jpg1.tar.gz 
+https://pan.baidu.com/s/1bnhR65SyfONoKTK90T57tQ 密码:r0d2
 
 使用：
 1、运行index.py，生存特征向量数据集
