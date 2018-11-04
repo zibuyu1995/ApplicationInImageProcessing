@@ -3,7 +3,7 @@
 ### IGNB:
 * 编写时间: 2018-11-3
 * 编写人: Mousse
-* 联系邮箱: taodk@emqx.io
+* 联系邮箱: zibuyu1995@gmail.com
 
 ### 系统环境:
 * python3.6
@@ -70,7 +70,7 @@ export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 * 有什么问题请联系我: zibuyu1995@gmail.com
 
 ### reference
-* 数据集下载:
+* 数据集下载: https://pan.baidu.com/s/1bnhR65SyfONoKTK90T57tQ  密码:r0d2
 * [sanic](https://sanic.readthedocs.io/)
 
 
