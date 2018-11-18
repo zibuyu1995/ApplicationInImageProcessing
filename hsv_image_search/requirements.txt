@@ -1,0 +1,10 @@
+Flask==1.0.2
+gunicorn==19.9.0
+Werkzeug==0.14.1
+async-timeout==3.0.1
+httptools==0.0.11
+MarkupSafe==1.0
+numpy==1.15.0
+opencv-python==3.4.2.17
+tinydb==3.11.1
+uvloop==0.11.1

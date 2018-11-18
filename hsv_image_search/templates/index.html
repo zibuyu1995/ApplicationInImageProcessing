@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ site_name }}</title>
+</head>
+<style>
+    .footer {
+        position: fixed; left: 0; bottom: 0;
+        width: 100%; color: white; text-align: center;
+    }
+    .btn {
+        font: 14px/21px Arial;
+        border: 1px solid #DDD;
+        text-decoration: none;
+        margin-top: 20px;
+        height: 25px;
+        width: 100px;
+        background-color: #d5d2ef;
+    }
+    .divForm{
+        position: absolute;/*绝对定位*/
+        width: 300px;
+        height: 200px;
+
+        top: 50%;
+        left: 50%;
+        margin-top: -200px;
+        margin-left: -150px;
+    }
+
+    .mousse {
+        background-image: url("/static/css/background.jpg");
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+        color: #000000;
+    }
+</style>
+
+
+<body class="mousse">
+<h1 align="center">{{ site_name }}</h1>
+<header class="intro" align="center">
+    <div class="divForm">
+        <h2>上传图像</h2>
+        <form action="/search"
+              accept="image/png, image/jpeg, image/gif, image/jpg"
+              method=post enctype=multipart/form-data>
+            <input type=file name=image  value="关键词">
+            <input type=submit value=搜索 class="btn">
+        </form>
+    </div>
+</header>
+
+
+<footer class="footer">
+    <p>Mousse by 2018-11-3 © IG NB</p>
+</footer>
+</body>
+</html>
