@@ -55,4 +55,3 @@ def calculate_histogram(image, mask, bins):
     )
     histogram = cv2.normalize(hist, hist).flatten()
     return histogram
-
