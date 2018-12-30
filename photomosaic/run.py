@@ -7,6 +7,10 @@ import cv2
 import numpy as np
 from tinydb import TinyDB
 
+from .config import (
+    origin_ds_path, resize_ds_path,
+    in_image_path, out_image_path, image_features_path
+)
 from ._libs.hsv_features import get_image_feature
 
 
@@ -17,7 +21,7 @@ class Photomosaic(object):
 
     @staticmethod
     def _get_features() -> List:
-        db = TinyDB('./static/dataset.db')
+        db = TinyDB(image_features_path)
         table = db.table('feature')
         return table.all()[0]
 
@@ -33,7 +37,7 @@ class Photomosaic(object):
         h, w = origin_image.shape[:2]
         out_image = np.zeros((h * 100, w * 100, 3, d), dtype=np.uint8)
         # features matching todo
-        cv2.imwrite('./ass.jpg', out_image)
+        cv2.imwrite(out_path, out_image)
         return out_image
 
 
