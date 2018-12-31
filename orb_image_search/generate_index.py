@@ -47,7 +47,6 @@ async def generate_image_index(eve_loop, processes_executor):
 
 
 if __name__ == '__main__':
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     executor = ProcessPoolExecutor(max_workers=cpu_count)
     event_loop = asyncio.get_event_loop()
     try:
