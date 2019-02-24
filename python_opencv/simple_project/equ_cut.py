@@ -10,9 +10,9 @@ import os
 import cv2
 
 
-def equ_cut():
-    in_path = './test/girl.png'
-    out_directory = './test/cut_images'
+def main():
+    in_path = './static/girl.png'
+    out_directory = './static/cut_images'
     image_ext = os.path.splitext(os.path.basename(in_path))[-1]
 
     origin_image = cv2.imread(in_path)
@@ -25,5 +25,5 @@ def equ_cut():
 
 
 if __name__ == '__main__':
-    equ_cut()
+    main()
 
