@@ -5,10 +5,9 @@ import random
 import numpy as np
 from numpy import ndarray
 import cv2
-from ..typedefs import HsvBins, ImageArray
 
 
-def get_image_feature(image_path, bins: HsvBins) -> Tuple:
+def get_image_feature(image_path, bins) -> Tuple:
     """
     计算图像hsv特征值
     :param image_path:
@@ -52,7 +51,7 @@ def get_image_feature(image_path, bins: HsvBins) -> Tuple:
     return image_uid, convert_features
 
 
-def get_place_feature(image: ImageArray, bins: HsvBins=None) -> ImageArray:
+def get_place_feature(image, bins = None):
     """ 计算图像中某一块像素的hsv值 """
 
     if not bins:
@@ -93,7 +92,7 @@ def get_place_feature(image: ImageArray, bins: HsvBins=None) -> ImageArray:
     return convert_features
 
 
-def calculate_histogram(image: ImageArray, mask, bins: HsvBins) -> list:
+def calculate_histogram(image, mask, bins) -> list:
     """
     计算hsv颜色直方图
     :param image: 输入图像

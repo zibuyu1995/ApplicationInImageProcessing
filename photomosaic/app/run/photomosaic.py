@@ -3,12 +3,15 @@
 
 from typing import List
 
+import cv2
+import numpy as np
 from tinydb import TinyDB
 
-from ._libs.hsv_features import get_place_feature
 from .config import (
-    in_image_path, image_features_path
+    image_features_path
 )
+from .._libs.hsv_features import get_place_feature
+from .._libs.image_match import chi_square
 
 
 class Photomosaic(object):
@@ -21,14 +24,29 @@ class Photomosaic(object):
         table = db.table('feature')
         return table.all()[0]
 
-    @staticmethod
-    def get_origin_place_image_feature():
-        origin_features = get_place_feature(
-            image=in_image_path,
-            bins=(8, 3, 3)
-        )
-        return origin_features
+    def get_pm(self, origin_image):
+        h, w = origin_image.shape[:2]
+        new_image = np.zeros((h, w, 3), np.uint8)
 
-    def generate_photomosaic(self):
-        ...
+        for i in range(1, int(h / 100)):
+            for j in range(1, int(w / 100)):
+                cut_image = origin_image[(i - 1) * 100:i * 100, (j - 1) * 100:j * 100]
+                place_feature = get_place_feature(cut_image)
+                match_image = self.img_match(place_feature)
+                resize_image = cv2.resize(match_image, (100, 100), interpolation=cv2.INTER_AREA)
+                new_image[(i - 1) * 100:i * 100, (j - 1) * 100:j * 100] = resize_image
+        cv2.imshow('pm', new_image)
+
+    def img_match(self, search_feature):
+        """ 图像搜索 """
+
+        match_results = []
+        match_results_append = match_results.append
+        for image_uid, feature in cache_features.items():
+            distance = chi_square(feature, search_feature)
+            match_results_append((image_uid, distance))
+        match_results = sorted(match_results, key=itemgetter(1))
+        optimal_result = match_results[1][0]
+        match_image = cv2.imread(f'../static/origin_images/{optimal_result}')
+        return match_image
 
