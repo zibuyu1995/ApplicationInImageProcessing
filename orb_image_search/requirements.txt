@@ -4,7 +4,7 @@ httptools==0.0.11
 Flask==2.0.1
 MarkupSafe==1.0
 numpy==1.15.0
-opencv-python==3.4.2.17
+opencv-python==3.4.7.28
 sanic==0.7.0
 sanic-jinja2==0.7.1
 tinydb==3.11.1
